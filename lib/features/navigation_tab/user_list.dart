@@ -6,6 +6,8 @@ import 'package:learn_hub/bloc/user/user_state.dart';
 import 'package:learn_hub/repositories/user_repository.dart';
 import 'package:learn_hub/widgets/user_tile.dart';
 
+import '../../utils/app_color.dart';
+
 class UserList extends StatelessWidget {
   const UserList({super.key, required this.repository});
 
@@ -14,14 +16,17 @@ class UserList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => UserBloc(repository)..add(LoadUser()),
+      create: (_) =>
+      UserBloc(repository)
+        ..add(LoadUser()),
 
       child: Scaffold(
         appBar: AppBar(title: const Text("User List")),
         body: BlocBuilder<UserBloc, UserState>(
           builder: (context, state) {
             if (state.isLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return Center(
+                  child: CircularProgressIndicator(color: AppColors.primary));
             }
 
             if (state.error != null) {

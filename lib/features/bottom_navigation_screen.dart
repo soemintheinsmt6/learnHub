@@ -39,7 +39,7 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
   Widget _buildScreens(int index) {
     switch (index) {
       case 0:
-        return HomeScreen();
+        return HomeScreen(repository: _userRepository);
       case 1:
         return UserList(repository: _userRepository);
       case 2:

@@ -13,4 +13,10 @@ class UserRepository {
 
     return users;
   }
+
+  Future<User> fetchUserById(int id) async {
+    final response = await api.get('users/$id');
+
+    return User.fromJson(response as Map<String, dynamic>);
+  }
 }

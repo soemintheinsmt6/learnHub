@@ -4,6 +4,7 @@ import 'package:learn_hub/bloc/company/company_bloc.dart';
 import 'package:learn_hub/bloc/company/company_event.dart';
 import 'package:learn_hub/bloc/company/company_state.dart';
 import 'package:learn_hub/repositories/company_repository.dart';
+import 'package:learn_hub/utils/app_color.dart';
 import 'package:learn_hub/widgets/company_tile.dart';
 
 class CompanyList extends StatelessWidget {
@@ -20,7 +21,9 @@ class CompanyList extends StatelessWidget {
         body: BlocBuilder<CompanyBloc, CompanyState>(
           builder: (context, state) {
             if (state.isLoading) {
-              return const Center(child: CircularProgressIndicator());
+              return Center(
+                child: CircularProgressIndicator(color: AppColors.primary),
+              );
             }
 
             if (state.error != null) {

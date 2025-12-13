@@ -42,6 +42,32 @@ void main() {
       expect(users.first.company, 'Acme');
       verify(() => api.get('users')).called(1);
     });
+
+    test('fetchUserById returns a single User from api response', () async {
+      final json = {
+        'id': 1,
+        'name': 'Emily Johnson',
+        'company': 'ABC Corporation',
+        'username': 'emily_johnson',
+        'email': 'emily.johnson@abccorporation.com',
+        'address': '123 Main St',
+        'zip': '12345',
+        'state': 'California',
+        'country': 'USA',
+        'phone': '+1-555-123-4567',
+        'photo':
+            'https://cdn.pixabay.com/photo/2012/04/13/21/07/user-33638_1280.png',
+      };
+
+      when(() => api.get('users/1')).thenAnswer((_) async => json);
+
+      final user = await repository.fetchUserById(1);
+
+      expect(user, isA<User>());
+      expect(user.name, 'Emily Johnson');
+      expect(user.email, 'emily.johnson@abccorporation.com');
+      verify(() => api.get('users/1')).called(1);
+    });
   });
 }
 
