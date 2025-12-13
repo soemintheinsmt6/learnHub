@@ -23,22 +23,22 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
     GlobalKey<NavigatorState>(),
   ];
 
+  late final ApiService _api;
+  late final UserRepository _userRepository;
+  late final CompanyRepository _companyRepository;
+
   int _selectedIndex = 0;
 
   final List<IconData> _iconPaths = [Icons.home, Icons.person, Icons.group];
 
   Widget _buildScreens(int index) {
-    final api = ApiService();
-    final userRepository = UserRepository(api);
-    final companyRepository = CompanyRepository(api);
-
     switch (index) {
       case 0:
         return HomeScreen();
       case 1:
-        return UserList(repository: userRepository);
+        return UserList(repository: _userRepository);
       case 2:
-        return CompanyList(repository: companyRepository);
+        return CompanyList(repository: _companyRepository);
       default:
         return Container();
     }
@@ -69,6 +69,10 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
   @override
   void initState() {
     super.initState();
+
+    _api = ApiService();
+    _userRepository = UserRepository(_api);
+    _companyRepository = CompanyRepository(_api);
 
     _screens[0] = _buildTabNavigator(0);
   }
