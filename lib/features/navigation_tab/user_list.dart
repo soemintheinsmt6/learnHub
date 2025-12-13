@@ -14,12 +14,10 @@ class UserList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) =>
-      UserBloc(repository)
-        ..add(LoadUser()),
+      create: (_) => UserBloc(repository)..add(LoadUser()),
 
       child: Scaffold(
-        appBar: AppBar(title: const Text("User List"), centerTitle: false),
+        appBar: AppBar(title: const Text("User List")),
         body: BlocBuilder<UserBloc, UserState>(
           builder: (context, state) {
             if (state.isLoading) {
@@ -32,7 +30,7 @@ class UserList extends StatelessWidget {
 
             return ListView.separated(
               itemCount: state.users.length,
-              padding: EdgeInsets.only(left: 20),
+              padding: EdgeInsets.all(20),
               itemBuilder: (context, index) {
                 final user = state.users[index];
                 return UserTile(user: user);

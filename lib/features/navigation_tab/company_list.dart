@@ -16,7 +16,7 @@ class CompanyList extends StatelessWidget {
     return BlocProvider(
       create: (_) => CompanyBloc(repository)..add(LoadCompanies()),
       child: Scaffold(
-        appBar: AppBar(title: const Text('Company List'), centerTitle: false),
+        appBar: AppBar(title: const Text('Company List')),
         body: BlocBuilder<CompanyBloc, CompanyState>(
           builder: (context, state) {
             if (state.isLoading) {
@@ -29,7 +29,7 @@ class CompanyList extends StatelessWidget {
 
             return ListView.builder(
               itemCount: state.companies.length,
-              padding: const EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.all(20),
               itemBuilder: (context, index) {
                 final company = state.companies[index];
                 return CompanyTile(company: company);

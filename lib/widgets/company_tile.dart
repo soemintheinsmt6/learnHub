@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:learn_hub/utils/app_color.dart';
 import '../models/company.dart';
 
 class CompanyTile extends StatelessWidget {
@@ -80,8 +81,8 @@ class CompanyTile extends StatelessWidget {
                               child: LinearProgressIndicator(
                                 value: progress.toDouble(),
                                 backgroundColor: Colors.grey.shade200,
-                                valueColor: const AlwaysStoppedAnimation<Color>(
-                                  Color(0xFF21D4B4),
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  AppColors.primary,
                                 ),
                               ),
                             ),

@@ -8,8 +8,9 @@ class UserTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textStyle = TextStyle(fontWeight: FontWeight.w600);
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         children: [
           ClipOval(
@@ -23,7 +24,10 @@ class UserTile extends StatelessWidget {
           const SizedBox(width: 10),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [Text(user.name), Text(user.company)],
+            children: [
+              Text(user.name, style: textStyle),
+              Text(user.company, style: textStyle),
+            ],
           ),
         ],
       ),

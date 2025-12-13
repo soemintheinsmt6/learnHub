@@ -6,13 +6,29 @@ import 'package:learn_hub/main.dart' as app;
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
+  // Helper function to wait for splash screen to complete and login screen to appear
+  Future<void> waitForLoginScreen(WidgetTester tester) async {
+    // Wait for splash screen (1.5 seconds) plus navigation time
+    await tester.pumpAndSettle(const Duration(seconds: 3));
+
+    // Verify we're on login screen
+    expect(find.text('Sign In'), findsWidgets);
+  }
+
   group('Learn Hub Integration Tests', () {
-    testWidgets('App launches and displays login screen', (
+    testWidgets('App launches and displays splash screen then login screen', (
       WidgetTester tester,
     ) async {
       // Start the app
       app.main();
-      await tester.pumpAndSettle();
+      await tester.pump();
+
+      // Initially, splash screen should be visible
+      // Wait a bit to see splash screen
+      await tester.pump(const Duration(milliseconds: 100));
+
+      // Wait for splash screen to complete and navigate to login
+      await waitForLoginScreen(tester);
 
       // Verify login screen is displayed
       // "Sign In" appears twice - once as title, once as button text
@@ -26,7 +42,7 @@ void main() {
 
     testWidgets('Login screen has input fields', (WidgetTester tester) async {
       app.main();
-      await tester.pumpAndSettle();
+      await waitForLoginScreen(tester);
 
       // Verify TextField widgets exist
       expect(find.byType(TextField), findsNWidgets(2));
@@ -41,7 +57,7 @@ void main() {
       WidgetTester tester,
     ) async {
       app.main();
-      await tester.pumpAndSettle();
+      await waitForLoginScreen(tester);
 
       // Find and enter username (first TextField)
       final textFields = find.byType(TextField);
@@ -77,7 +93,7 @@ void main() {
       WidgetTester tester,
     ) async {
       app.main();
-      await tester.pumpAndSettle();
+      await waitForLoginScreen(tester);
 
       final textFields = find.byType(TextField);
       expect(textFields, findsNWidgets(2));
@@ -108,10 +124,9 @@ void main() {
       WidgetTester tester,
     ) async {
       app.main();
-      await tester.pumpAndSettle();
+      await waitForLoginScreen(tester);
 
       // Verify we're on login screen
-      expect(find.text('Sign In'), findsWidgets);
       expect(find.text('Welcome Developer'), findsOneWidget);
 
       // Enter credentials
@@ -147,7 +162,7 @@ void main() {
       WidgetTester tester,
     ) async {
       app.main();
-      await tester.pumpAndSettle();
+      await waitForLoginScreen(tester);
 
       // Try to find bottom navigation bar
       // This will only work if we're on the bottom navigation screen
@@ -161,7 +176,7 @@ void main() {
         // Verify icons are present
         expect(find.byIcon(Icons.home), findsOneWidget);
         expect(find.byIcon(Icons.person), findsOneWidget);
-        expect(find.byIcon(Icons.group), findsOneWidget);
+        expect(find.byIcon(Icons.collections_bookmark), findsOneWidget);
       }
     });
 
@@ -169,7 +184,7 @@ void main() {
       WidgetTester tester,
     ) async {
       app.main();
-      await tester.pumpAndSettle();
+      await waitForLoginScreen(tester);
 
       // This test assumes we're on the bottom navigation screen
       final bottomNavBar = find.byType(BottomNavigationBar);
@@ -189,7 +204,7 @@ void main() {
         }
 
         // Tap on third tab (Company List)
-        final companyTab = find.byIcon(Icons.group);
+        final companyTab = find.byIcon(Icons.collections_bookmark);
         if (companyTab.evaluate().isNotEmpty) {
           await tester.tap(companyTab);
           await tester.pumpAndSettle();
@@ -214,7 +229,7 @@ void main() {
       WidgetTester tester,
     ) async {
       app.main();
-      await tester.pumpAndSettle();
+      await waitForLoginScreen(tester);
 
       // Navigate to user list if bottom nav is available
       final bottomNavBar = find.byType(BottomNavigationBar);
@@ -245,12 +260,12 @@ void main() {
       WidgetTester tester,
     ) async {
       app.main();
-      await tester.pumpAndSettle();
+      await waitForLoginScreen(tester);
 
       // Navigate to company list if bottom nav is available
       final bottomNavBar = find.byType(BottomNavigationBar);
       if (bottomNavBar.evaluate().isNotEmpty) {
-        final companyTab = find.byIcon(Icons.group);
+        final companyTab = find.byIcon(Icons.collections_bookmark);
         if (companyTab.evaluate().isNotEmpty) {
           await tester.tap(companyTab);
           await tester.pumpAndSettle(const Duration(seconds: 5));
@@ -274,7 +289,7 @@ void main() {
 
     testWidgets('Home screen displays correctly', (WidgetTester tester) async {
       app.main();
-      await tester.pumpAndSettle();
+      await waitForLoginScreen(tester);
 
       // Navigate to home if bottom nav is available
       final bottomNavBar = find.byType(BottomNavigationBar);
@@ -297,7 +312,7 @@ void main() {
 
     testWidgets('Password field is obscured', (WidgetTester tester) async {
       app.main();
-      await tester.pumpAndSettle();
+      await waitForLoginScreen(tester);
 
       // Find password field (second TextField)
       final textFields = find.byType(TextField);
@@ -314,10 +329,9 @@ void main() {
       WidgetTester tester,
     ) async {
       app.main();
-      await tester.pumpAndSettle();
+      await waitForLoginScreen(tester);
 
       // Verify we start on login screen
-      expect(find.text('Sign In'), findsWidgets);
       expect(find.text('Welcome Developer'), findsOneWidget);
 
       // Enter invalid credentials

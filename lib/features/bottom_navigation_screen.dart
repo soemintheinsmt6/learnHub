@@ -4,6 +4,7 @@ import 'package:learn_hub/features/navigation_tab/user_list.dart';
 import 'package:learn_hub/repositories/company_repository.dart';
 import 'package:learn_hub/repositories/user_repository.dart';
 import 'package:learn_hub/services/api_service.dart';
+import 'package:learn_hub/utils/app_color.dart';
 import 'navigation_tab/home_screen.dart';
 
 class BottomNavigationScreen extends StatefulWidget {
@@ -29,7 +30,11 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
 
   int _selectedIndex = 0;
 
-  final List<IconData> _iconPaths = [Icons.home, Icons.person, Icons.group];
+  final List<IconData> _iconPaths = [
+    Icons.home,
+    Icons.person,
+    Icons.collections_bookmark,
+  ];
 
   Widget _buildScreens(int index) {
     switch (index) {
@@ -84,30 +89,31 @@ class _BottomNavigationScreenState extends State<BottomNavigationScreen> {
         index: _selectedIndex,
         children: _screens.map((screen) => screen ?? const SizedBox()).toList(),
       ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 8,
-              offset: const Offset(0, -2), // shadow above the bar
-            ),
-          ],
+      bottomNavigationBar: ClipRRect(
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
         ),
-        child: BottomNavigationBar(
-          currentIndex: _selectedIndex,
-          backgroundColor: Colors.white,
-          type: BottomNavigationBarType.fixed,
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          onTap: _onItemTapped,
-          items: List.generate(_iconPaths.length, (index) {
-            return BottomNavigationBarItem(
-              icon: Icon(_iconPaths[index]),
-              label: '',
-            );
-          }),
+        child: Container(
+          color: AppColors.primary,
+          child: BottomNavigationBar(
+            currentIndex: _selectedIndex,
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            type: BottomNavigationBarType.fixed,
+            showSelectedLabels: false,
+            showUnselectedLabels: false,
+            onTap: _onItemTapped,
+            items: List.generate(_iconPaths.length, (index) {
+              return BottomNavigationBarItem(
+                icon: Icon(
+                  _iconPaths[index],
+                  color: _selectedIndex == index ? Colors.black : Colors.white,
+                ),
+                label: '',
+              );
+            }),
+          ),
         ),
       ),
     );

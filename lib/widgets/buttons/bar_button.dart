@@ -21,7 +21,7 @@ class BarButton extends StatelessWidget {
         ),
         child: Text(
           title,
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
       ),
     );

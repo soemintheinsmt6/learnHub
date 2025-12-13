@@ -21,8 +21,8 @@ class CustomTextField extends StatelessWidget {
 
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 4.0, bottom: 4),
-          child: Text(title),
+          padding: const EdgeInsets.only(left: 4.0, bottom: 6),
+          child: Text(title, style: TextStyle(fontWeight: FontWeight.w600)),
         ),
         TextField(
           decoration: kTextFieldDecoration.copyWith(hintText: title),
