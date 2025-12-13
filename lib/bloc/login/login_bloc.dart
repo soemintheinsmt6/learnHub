@@ -16,7 +16,18 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     });
 
     on<LoginSubmitted>((event, emit) async {
-      emit(state.copyWith(isLoading: true, error: null));
+      if (state.phoneNumber.isEmpty || state.password.isEmpty) {
+        emit(
+          state.copyWith(
+            isLoading: false,
+            isSuccess: false,
+            error: 'Please enter username and password',
+          ),
+        );
+        return;
+      }
+
+      emit(state.copyWith(isLoading: true, error: null, isSuccess: false));
 
       try {
         final result = await repository.login(

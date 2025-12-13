@@ -56,30 +56,43 @@ class CompanyTile extends StatelessWidget {
                         color: Colors.grey.shade600,
                       ),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              top: 16.0,
+                              bottom: 8,
+                              right: 8,
+                            ),
+                            child: Text(
+                              'Employee Count',
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(color: Colors.grey.shade600),
+                            ),
+                          ),
+                          SizedBox(
+                            height: 6,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(3),
+                              child: LinearProgressIndicator(
+                                value: progress.toDouble(),
+                                backgroundColor: Colors.grey.shade200,
+                                valueColor: const AlwaysStoppedAnimation<Color>(
+                                  Color(0xFF21D4B4),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
-              Text(
-                'Employee Count',
-                style: Theme.of(
-                  context,
-                ).textTheme.bodySmall?.copyWith(color: Colors.grey.shade600),
-              ),
             ],
-          ),
-          const SizedBox(height: 12),
-          SizedBox(
-            height: 6,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(3),
-              child: LinearProgressIndicator(
-                value: progress.toDouble(),
-                backgroundColor: Colors.grey.shade200,
-                valueColor: const AlwaysStoppedAnimation<Color>(
-                  Color(0xFF21D4B4),
-                ),
-              ),
-            ),
           ),
         ],
       ),

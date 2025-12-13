@@ -42,10 +42,22 @@ void main() {
             .thenAnswer((_) async => response);
         return LoginBloc(repository);
       },
-      act: (bloc) => bloc.add(LoginSubmitted()),
+      act: (bloc) {
+        bloc.add(PhoneNumberChanged('user'));
+        bloc.add(PasswordChanged('pass'));
+        bloc.add(LoginSubmitted());
+      },
       expect: () => [
-        const LoginState(isLoading: true),
-        LoginState(isLoading: false, isSuccess: true, data: {'token': 'abc'}),
+        const LoginState(phoneNumber: 'user'),
+        const LoginState(phoneNumber: 'user', password: 'pass'),
+        const LoginState(phoneNumber: 'user', password: 'pass', isLoading: true),
+        LoginState(
+          phoneNumber: 'user',
+          password: 'pass',
+          isLoading: false,
+          isSuccess: true,
+          data: {'token': 'abc'},
+        ),
       ],
       verify: (_) => verify(() => repository.login(any(), any())).called(1),
     );
@@ -57,16 +69,41 @@ void main() {
             .thenThrow(Exception('invalid credentials'));
         return LoginBloc(repository);
       },
-      act: (bloc) => bloc.add(LoginSubmitted()),
+      act: (bloc) {
+        bloc.add(PhoneNumberChanged('user'));
+        bloc.add(PasswordChanged('pass'));
+        bloc.add(LoginSubmitted());
+      },
       expect: () => const [
-        LoginState(isLoading: true),
+        LoginState(phoneNumber: 'user'),
+        LoginState(phoneNumber: 'user', password: 'pass'),
         LoginState(
+          phoneNumber: 'user',
+          password: 'pass',
+          isLoading: true,
+        ),
+        LoginState(
+          phoneNumber: 'user',
+          password: 'pass',
           isLoading: false,
           isSuccess: false,
           error: 'Exception: invalid credentials',
         ),
       ],
     );
+
+    blocTest<LoginBloc, LoginState>(
+      'emits validation error when fields are empty',
+      build: () => LoginBloc(repository),
+      act: (bloc) => bloc.add(LoginSubmitted()),
+      expect: () => const [
+        LoginState(
+          isLoading: false,
+          isSuccess: false,
+          error: 'Please enter username and password',
+        ),
+      ],
+      verify: (_) => verifyNever(() => repository.login(any(), any())),
+    );
   });
 }
-
