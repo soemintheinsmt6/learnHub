@@ -1,0 +1,39 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../repositories/login_repository.dart';
+import 'login_event.dart';
+import 'login_state.dart';
+
+class LoginBloc extends Bloc<LoginEvent, LoginState> {
+  final LoginRepository repository;
+
+  LoginBloc(this.repository) : super(const LoginState()) {
+    on<PhoneNumberChanged>((event, emit) {
+      emit(state.copyWith(phoneNumber: event.phoneNumber, error: null));
+    });
+
+    on<PasswordChanged>((event, emit) {
+      emit(state.copyWith(password: event.password, error: null));
+    });
+
+    on<LoginSubmitted>((event, emit) async {
+      emit(state.copyWith(isLoading: true, error: null));
+
+      try {
+        final result = await repository.login(
+          state.phoneNumber,
+          state.password,
+        );
+
+        emit(state.copyWith(isLoading: false, isSuccess: true, data: result));
+      } catch (e) {
+        emit(
+          state.copyWith(
+            isLoading: false,
+            isSuccess: false,
+            error: e.toString(),
+          ),
+        );
+      }
+    });
+  }
+}
