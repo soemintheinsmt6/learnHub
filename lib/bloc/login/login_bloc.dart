@@ -16,12 +16,32 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     });
 
     on<LoginSubmitted>((event, emit) async {
+      if (state.error != null) {
+        emit(
+          state.copyWith(
+            error: null,
+            isSuccess: false,
+          ),
+        );
+      }
+
       if (state.phoneNumber.isEmpty || state.password.isEmpty) {
         emit(
           state.copyWith(
             isLoading: false,
             isSuccess: false,
             error: 'Please enter username and password',
+          ),
+        );
+        return;
+      }
+
+      if (state.password.length < 8) {
+        emit(
+          state.copyWith(
+            isLoading: false,
+            isSuccess: false,
+            error: 'Password must be at least 8 characters',
           ),
         );
         return;

@@ -44,16 +44,20 @@ void main() {
       },
       act: (bloc) {
         bloc.add(PhoneNumberChanged('user'));
-        bloc.add(PasswordChanged('pass'));
+        bloc.add(PasswordChanged('password'));
         bloc.add(LoginSubmitted());
       },
       expect: () => [
         const LoginState(phoneNumber: 'user'),
-        const LoginState(phoneNumber: 'user', password: 'pass'),
-        const LoginState(phoneNumber: 'user', password: 'pass', isLoading: true),
+        const LoginState(phoneNumber: 'user', password: 'password'),
+        const LoginState(
+          phoneNumber: 'user',
+          password: 'password',
+          isLoading: true,
+        ),
         LoginState(
           phoneNumber: 'user',
-          password: 'pass',
+          password: 'password',
           isLoading: false,
           isSuccess: true,
           data: {'token': 'abc'},
@@ -71,25 +75,47 @@ void main() {
       },
       act: (bloc) {
         bloc.add(PhoneNumberChanged('user'));
-        bloc.add(PasswordChanged('pass'));
+        bloc.add(PasswordChanged('password'));
         bloc.add(LoginSubmitted());
       },
       expect: () => const [
         LoginState(phoneNumber: 'user'),
-        LoginState(phoneNumber: 'user', password: 'pass'),
+        LoginState(phoneNumber: 'user', password: 'password'),
         LoginState(
           phoneNumber: 'user',
-          password: 'pass',
+          password: 'password',
           isLoading: true,
         ),
         LoginState(
           phoneNumber: 'user',
-          password: 'pass',
+          password: 'password',
           isLoading: false,
           isSuccess: false,
           error: 'Exception: invalid credentials',
         ),
       ],
+    );
+
+    blocTest<LoginBloc, LoginState>(
+      'emits validation error when password is shorter than 8 characters',
+      build: () => LoginBloc(repository),
+      act: (bloc) {
+        bloc.add(PhoneNumberChanged('user'));
+        bloc.add(PasswordChanged('short'));
+        bloc.add(LoginSubmitted());
+      },
+      expect: () => const [
+        LoginState(phoneNumber: 'user'),
+        LoginState(phoneNumber: 'user', password: 'short'),
+        LoginState(
+          phoneNumber: 'user',
+          password: 'short',
+          isLoading: false,
+          isSuccess: false,
+          error: 'Password must be at least 8 characters',
+        ),
+      ],
+      verify: (_) => verifyNever(() => repository.login(any(), any())),
     );
 
     blocTest<LoginBloc, LoginState>(

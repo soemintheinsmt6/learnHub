@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:learn_hub/utils/app_color.dart';
-import '../models/company.dart';
+import '../../models/company.dart';
 
 class CompanyTile extends StatelessWidget {
   const CompanyTile({super.key, required this.company});

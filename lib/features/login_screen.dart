@@ -40,58 +40,64 @@ class LoginScreen extends StatelessWidget {
           builder: (context, state) {
             final bloc = context.read<LoginBloc>();
 
-            return Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(
-                    top: kToolbarHeight + 30,
-                    left: 30,
-                    right: 30,
-                  ),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 30.0),
-                        child: Column(
-                          children: [
-                            Text(
-                              'Sign In',
-                              style: TextStyle(
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold,
+            return GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onTap: () {
+                FocusScope.of(context).unfocus();
+              },
+              child: Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      top: kToolbarHeight + 30,
+                      left: 30,
+                      right: 30,
+                    ),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 30.0),
+                          child: Column(
+                            children: [
+                              Text(
+                                'Sign In',
+                                style: TextStyle(
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Welcome Developer',
-                              style: TextStyle(color: Colors.grey.shade600),
-                            ),
-                          ],
+                              const SizedBox(height: 8),
+                              Text(
+                                'Welcome Developer',
+                                style: TextStyle(color: Colors.grey.shade600),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
 
-                      CustomTextField(
-                        title: 'User Name',
-                        onChanged: (val) => bloc.add(PhoneNumberChanged(val)),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 20.0, bottom: 50),
-                        child: CustomTextField(
-                          title: 'Password',
-                          obscureText: true,
-                          onChanged: (val) => bloc.add(PasswordChanged(val)),
+                        CustomTextField(
+                          title: 'User Name',
+                          onChanged: (val) => bloc.add(PhoneNumberChanged(val)),
                         ),
-                      ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 20.0, bottom: 50),
+                          child: CustomTextField(
+                            title: 'Password',
+                            obscureText: true,
+                            onChanged: (val) => bloc.add(PasswordChanged(val)),
+                          ),
+                        ),
 
-                      BarButton(
-                        title: 'Sign In',
-                        onTap: () => bloc.add(LoginSubmitted()),
-                      ),
-                    ],
+                        BarButton(
+                          title: 'Sign In',
+                          onTap: () => bloc.add(LoginSubmitted()),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                if (state.isLoading) CustomProgressIndicator(),
-              ],
+                  if (state.isLoading) CustomProgressIndicator(),
+                ],
+              ),
             );
           },
         ),

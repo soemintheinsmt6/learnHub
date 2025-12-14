@@ -5,7 +5,7 @@ import 'package:learn_hub/bloc/company/company_event.dart';
 import 'package:learn_hub/bloc/company/company_state.dart';
 import 'package:learn_hub/repositories/company_repository.dart';
 import 'package:learn_hub/utils/app_color.dart';
-import 'package:learn_hub/widgets/company_tile.dart';
+import 'package:learn_hub/widgets/tiles/company_tile.dart';
 
 class CompanyList extends StatelessWidget {
   const CompanyList({super.key, required this.repository});

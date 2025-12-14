@@ -28,6 +28,7 @@ class CustomTextField extends StatelessWidget {
           decoration: kTextFieldDecoration.copyWith(hintText: title),
           obscureText: obscureText,
           onChanged: onChanged,
+          textInputAction: TextInputAction.next,
         ),
       ],
     );

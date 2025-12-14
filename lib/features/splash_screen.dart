@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:learn_hub/features/login_screen.dart';
+import 'package:learn_hub/features/on_boarding_screen.dart';
 import 'package:learn_hub/utils/app_color.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -24,7 +24,10 @@ class _SplashScreenState extends State<SplashScreen> {
           pageBuilder: (context, animation, secondaryAnimation) => widget,
           transitionDuration: const Duration(milliseconds: 500),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(opacity: animation, child: LoginScreen());
+            return FadeTransition(
+              opacity: animation,
+              child: OnBoardingScreen(),
+            );
           },
         ),
       );

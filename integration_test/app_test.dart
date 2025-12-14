@@ -6,17 +6,68 @@ import 'package:learn_hub/main.dart' as app;
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  // Helper function to wait for splash screen to complete and login screen to appear
+  // Helper function to wait for splash screen, onboarding, and navigate to login screen
   Future<void> waitForLoginScreen(WidgetTester tester) async {
     // Wait for splash screen (1.5 seconds) plus navigation time
     await tester.pumpAndSettle(const Duration(seconds: 3));
 
-    // Verify we're on login screen
-    expect(find.text('Sign In'), findsWidgets);
+    // Check if we're already on login screen
+    final welcomeText = find.text('Welcome Developer');
+    if (welcomeText.evaluate().isNotEmpty) {
+      // Already on login screen, no need to navigate
+      return;
+    }
+
+    // Check if we're on onboarding screen
+    final skipButton = find.text('Skip');
+    final continueButton = find.text('Continue');
+    
+    // If we see Skip or Continue, we're on onboarding screen
+    if (skipButton.evaluate().isNotEmpty) {
+      // Tap Skip to go to last page
+      await tester.tap(skipButton);
+      await tester.pumpAndSettle();
+      
+      // Now on last page, tap Sign In to go to login screen
+      final signInBtn = find.text('Sign In');
+      if (signInBtn.evaluate().isNotEmpty) {
+        await tester.tap(signInBtn.first);
+        await tester.pumpAndSettle();
+      }
+    } else if (continueButton.evaluate().isNotEmpty) {
+      // Navigate through all onboarding pages
+      for (int i = 0; i < 5; i++) {
+        final continueBtn = find.text('Continue');
+        if (continueBtn.evaluate().isNotEmpty) {
+          await tester.tap(continueBtn);
+          await tester.pumpAndSettle();
+        } else {
+          // Last page, tap Sign In
+          final signInBtn = find.text('Sign In');
+          if (signInBtn.evaluate().isNotEmpty) {
+            await tester.tap(signInBtn.first);
+            await tester.pumpAndSettle();
+            break;
+          }
+        }
+      }
+    } else {
+      // Might be on last page of onboarding already
+      final signInBtn = find.text('Sign In');
+      if (signInBtn.evaluate().isNotEmpty && welcomeText.evaluate().isEmpty) {
+        // On onboarding last page, tap Sign In
+        await tester.tap(signInBtn.first);
+        await tester.pumpAndSettle();
+      }
+    }
+
+    // Verify we're on login screen (not onboarding)
+    // Login screen has "Welcome Developer" text
+    expect(find.text('Welcome Developer'), findsOneWidget);
   }
 
   group('Learn Hub Integration Tests', () {
-    testWidgets('App launches and displays splash screen then login screen', (
+    testWidgets('App launches and displays splash screen then onboarding then login screen', (
       WidgetTester tester,
     ) async {
       // Start the app
@@ -27,7 +78,19 @@ void main() {
       // Wait a bit to see splash screen
       await tester.pump(const Duration(milliseconds: 100));
 
-      // Wait for splash screen to complete and navigate to login
+      // Wait for splash screen to complete and navigate to onboarding
+      await tester.pumpAndSettle(const Duration(seconds: 3));
+
+      // Verify we're on onboarding screen
+      // Either Skip or Continue button should be present
+      final skipButton = find.text('Skip');
+      final continueButton = find.text('Continue');
+      expect(
+        skipButton.evaluate().isNotEmpty || continueButton.evaluate().isNotEmpty,
+        isTrue,
+      );
+
+      // Navigate through onboarding to login
       await waitForLoginScreen(tester);
 
       // Verify login screen is displayed
@@ -38,6 +101,61 @@ void main() {
       expect(find.text('User Name'), findsNWidgets(2));
       // "Password" appears twice - once as label, once as hint text
       expect(find.text('Password'), findsNWidgets(2));
+    });
+
+    testWidgets('Onboarding screen displays and can be navigated', (
+      WidgetTester tester,
+    ) async {
+      // Start the app
+      app.main();
+      await tester.pump();
+
+      // Wait for splash screen to complete
+      await tester.pumpAndSettle(const Duration(seconds: 3));
+
+      // Verify we're on onboarding screen
+      // Either Skip or Continue button should be present
+      final skipButton = find.text('Skip');
+      final continueButton = find.text('Continue');
+      expect(
+        skipButton.evaluate().isNotEmpty || continueButton.evaluate().isNotEmpty,
+        isTrue,
+      );
+      
+      // Verify page indicator is present
+      expect(find.byType(PageView), findsOneWidget);
+
+      // Verify we can see onboarding content
+      // The first page should have a title
+      expect(find.byType(PageView), findsOneWidget);
+    });
+
+    testWidgets('Can skip onboarding and navigate to login', (
+      WidgetTester tester,
+    ) async {
+      // Start the app
+      app.main();
+      await tester.pump();
+
+      // Wait for splash screen to complete
+      await tester.pumpAndSettle(const Duration(seconds: 3));
+
+      // Find and tap Skip button
+      final skipButton = find.text('Skip');
+      if (skipButton.evaluate().isNotEmpty) {
+        await tester.tap(skipButton);
+        await tester.pumpAndSettle();
+      }
+
+      // Should be on last page now, tap Sign In
+      final signInButton = find.text('Sign In');
+      if (signInButton.evaluate().isNotEmpty) {
+        await tester.tap(signInButton.first);
+        await tester.pumpAndSettle();
+      }
+
+      // Verify we're on login screen
+      expect(find.text('Welcome Developer'), findsOneWidget);
     });
 
     testWidgets('Login screen has input fields', (WidgetTester tester) async {
