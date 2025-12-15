@@ -41,6 +41,30 @@ void main() {
         ),
       ).called(1);
     });
+
+    test('login propagates exception when ApiService.post throws', () async {
+      const userName = 'john';
+      const password = 'secret';
+
+      when(
+        () => api.post(
+          'login',
+          body: any(named: 'body'),
+          isRequiredToken: false,
+        ),
+      ).thenThrow(Exception('network error'));
+
+      expect(
+        () => repository.login(userName, password),
+        throwsA(isA<Exception>()),
+      );
+      verify(
+        () => api.post(
+          'login',
+          body: any(named: 'body'),
+          isRequiredToken: false,
+        ),
+      ).called(1);
+    });
   });
 }
-

@@ -4,9 +4,11 @@ import 'package:learn_hub/bloc/user/user_bloc.dart';
 import 'package:learn_hub/bloc/user/user_event.dart';
 import 'package:learn_hub/bloc/user/user_state.dart';
 import 'package:learn_hub/repositories/user_repository.dart';
+import 'package:learn_hub/utils/push_view.dart';
 import 'package:learn_hub/widgets/tiles/user_tile.dart';
 
 import '../../utils/app_color.dart';
+import '../details/user_details_screen.dart';
 
 class UserList extends StatelessWidget {
   const UserList({super.key, required this.repository});
@@ -35,12 +37,18 @@ class UserList extends StatelessWidget {
             return ListView.separated(
               itemCount: state.users.length,
               padding: EdgeInsets.all(20),
+              separatorBuilder: (BuildContext context, int index) => Divider(),
               itemBuilder: (context, index) {
                 final user = state.users[index];
-                return UserTile(user: user);
-              },
-              separatorBuilder: (BuildContext context, int index) {
-                return Divider();
+                return UserTile(
+                  user: user,
+                  onTap: () {
+                    pushView(
+                      context,
+                      UserDetailsScreen(user: user, repository: repository),
+                    );
+                  },
+                );
               },
             );
           },

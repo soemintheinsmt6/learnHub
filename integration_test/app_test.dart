@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:learn_hub/main.dart' as app;
+import 'package:learn_hub/widgets/tiles/company_tile.dart';
+import 'package:learn_hub/widgets/tiles/user_tile.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -64,6 +66,23 @@ void main() {
     // Verify we're on login screen (not onboarding)
     // Login screen has "Welcome Developer" text
     expect(find.text('Welcome Developer'), findsOneWidget);
+  }
+
+  // Helper to attempt login and wait for navigation
+  Future<void> attemptLogin(WidgetTester tester) async {
+    final textFields = find.byType(TextField);
+    if (textFields.evaluate().length >= 2) {
+      await tester.enterText(textFields.first, 'testuser');
+      await tester.pump();
+      await tester.enterText(textFields.last, 'testpassword');
+      await tester.pump();
+    }
+
+    final signInButton = find.text('Sign In');
+    if (signInButton.evaluate().isNotEmpty) {
+      await tester.tap(signInButton.last);
+      await tester.pumpAndSettle(const Duration(seconds: 10));
+    }
   }
 
   group('Learn Hub Integration Tests', () {
@@ -156,6 +175,58 @@ void main() {
 
       // Verify we're on login screen
       expect(find.text('Welcome Developer'), findsOneWidget);
+    });
+
+    testWidgets('User detail screen can be opened from user list', (
+      WidgetTester tester,
+    ) async {
+      app.main();
+      await waitForLoginScreen(tester);
+      await attemptLogin(tester);
+
+      final bottomNavBar = find.byType(BottomNavigationBar);
+      if (bottomNavBar.evaluate().isNotEmpty) {
+        final userTab = find.byIcon(Icons.person);
+        if (userTab.evaluate().isNotEmpty) {
+          await tester.tap(userTab);
+          await tester.pumpAndSettle(const Duration(seconds: 3));
+        }
+
+        final userTileFinder = find.byType(UserTile);
+        if (userTileFinder.evaluate().isNotEmpty) {
+          await tester.tap(userTileFinder.first);
+          await tester.pumpAndSettle(const Duration(seconds: 3));
+
+          expect(find.text('About Me'), findsOneWidget);
+          expect(find.text('Personal Information'), findsOneWidget);
+        }
+      }
+    });
+
+    testWidgets('Company detail screen can be opened from company list', (
+      WidgetTester tester,
+    ) async {
+      app.main();
+      await waitForLoginScreen(tester);
+      await attemptLogin(tester);
+
+      final bottomNavBar = find.byType(BottomNavigationBar);
+      if (bottomNavBar.evaluate().isNotEmpty) {
+        final companyTab = find.byIcon(Icons.collections_bookmark);
+        if (companyTab.evaluate().isNotEmpty) {
+          await tester.tap(companyTab);
+          await tester.pumpAndSettle(const Duration(seconds: 3));
+        }
+
+        final companyTileFinder = find.byType(CompanyTile);
+        if (companyTileFinder.evaluate().isNotEmpty) {
+          await tester.tap(companyTileFinder.first);
+          await tester.pumpAndSettle(const Duration(seconds: 3));
+
+          expect(find.text('About Company'), findsOneWidget);
+          expect(find.text('Company Information'), findsOneWidget);
+        }
+      }
     });
 
     testWidgets('Login screen has input fields', (WidgetTester tester) async {

@@ -16,4 +16,10 @@ class CompanyRepository {
 
     return companies;
   }
+
+  Future<Company> fetchCompanyById(int id) async {
+    final response = await api.get('companies/$id');
+
+    return Company.fromJson(response as Map<String, dynamic>);
+  }
 }

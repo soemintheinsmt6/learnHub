@@ -42,6 +42,62 @@ void main() {
       expect(companies.first.ceoName, 'John Smith');
       verify(() => api.get('companies')).called(1);
     });
+
+    test('fetchCompanies returns empty list when api returns empty list',
+        () async {
+      when(() => api.get('companies')).thenAnswer((_) async => []);
+
+      final companies = await repository.fetchCompanies();
+
+      expect(companies, isA<List<Company>>());
+      expect(companies, isEmpty);
+      verify(() => api.get('companies')).called(1);
+    });
+
+    test('fetchCompanies throws when api.get throws', () async {
+      when(() => api.get('companies')).thenThrow(Exception('network error'));
+
+      expect(
+        () => repository.fetchCompanies(),
+        throwsA(isA<Exception>()),
+      );
+      verify(() => api.get('companies')).called(1);
+    });
+
+    test('fetchCompanyById returns a single Company from api response',
+        () async {
+      final json = {
+        'id': 1,
+        'name': 'ABC Corporation',
+        'address': '123 Main St',
+        'zip': '12345',
+        'country': 'USA',
+        'employeeCount': 2,
+        'industry': 'Technology',
+        'marketCap': 1000000000,
+        'domain': 'abccorp.com',
+        'logo': 'https://example.com/logo1.png',
+        'ceoName': 'Maritza Feeney',
+      };
+
+      when(() => api.get('companies/1')).thenAnswer((_) async => json);
+
+      final company = await repository.fetchCompanyById(1);
+
+      expect(company, isA<Company>());
+      expect(company.name, 'ABC Corporation');
+      expect(company.ceoName, 'Maritza Feeney');
+      verify(() => api.get('companies/1')).called(1);
+    });
+
+    test('fetchCompanyById throws when api.get throws', () async {
+      when(() => api.get('companies/1')).thenThrow(Exception('not found'));
+
+      expect(
+        () => repository.fetchCompanyById(1),
+        throwsA(isA<Exception>()),
+      );
+      verify(() => api.get('companies/1')).called(1);
+    });
   });
 }
-

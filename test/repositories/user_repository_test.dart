@@ -43,6 +43,26 @@ void main() {
       verify(() => api.get('users')).called(1);
     });
 
+    test('fetchUsers returns empty list when api returns empty list', () async {
+      when(() => api.get('users')).thenAnswer((_) async => []);
+
+      final users = await repository.fetchUsers();
+
+      expect(users, isA<List<User>>());
+      expect(users, isEmpty);
+      verify(() => api.get('users')).called(1);
+    });
+
+    test('fetchUsers throws when api.get throws', () async {
+      when(() => api.get('users')).thenThrow(Exception('network error'));
+
+      expect(
+        () => repository.fetchUsers(),
+        throwsA(isA<Exception>()),
+      );
+      verify(() => api.get('users')).called(1);
+    });
+
     test('fetchUserById returns a single User from api response', () async {
       final json = {
         'id': 1,
@@ -68,6 +88,15 @@ void main() {
       expect(user.email, 'emily.johnson@abccorporation.com');
       verify(() => api.get('users/1')).called(1);
     });
+
+    test('fetchUserById throws when api.get throws', () async {
+      when(() => api.get('users/1')).thenThrow(Exception('not found'));
+
+      expect(
+        () => repository.fetchUserById(1),
+        throwsA(isA<Exception>()),
+      );
+      verify(() => api.get('users/1')).called(1);
+    });
   });
 }
-

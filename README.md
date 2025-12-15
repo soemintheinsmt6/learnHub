@@ -5,7 +5,7 @@ LearnHub is a Flutter application showcasing a compact but complete architecture
 - Onboarding flow with multiple pages
 - Authentication (login screen with validation)
 - Bottom navigation with nested tabs
-- User profile, user list, and company list screens backed by a REST API
+- User profile, user list, company list, and detail screens backed by a REST API
 - BLoC for state management
 - Repository and service layers for separation of concerns
 
@@ -21,9 +21,14 @@ business logic, and data access for better maintainability and scalability.
   (`lib/features/login_screen.dart`)
 - Home tab showing a user profile fetched from `users/1` with “About Me” and
   “My Skills” sections (`lib/features/navigation_tab/home_screen.dart`)
-- User list tab with avatars and basic info (`lib/features/navigation_tab/user_list.dart`)
+- User list tab with avatars and basic info (`lib/features/navigation_tab/user_list.dart`);
+  tapping a user opens a full user details screen with profile photo, stats,
+  “About Me”, “My Skills”, and personal information
+  (`lib/features/details/user_details_screen.dart`)
 - Company list tab with card-style tiles and progress indicator
-  (`lib/features/navigation_tab/company_list.dart`)
+  (`lib/features/navigation_tab/company_list.dart`); tapping a company opens
+  a company details screen with hero banner, metrics, and company information
+  (`lib/features/details/company_details_screen.dart`)
 - Bottom navigation to switch between Home, Users, and Companies
   (`lib/features/bottom_navigation_screen.dart`)
 - API integration via a configurable `ApiService` (`lib/services/api_service.dart`)
@@ -72,7 +77,8 @@ models.
         - `LoginBloc` (`lib/bloc/login/login_bloc.dart`)
         - `UserBloc` (`lib/bloc/user/user_bloc.dart`)
         - `CompanyBloc` (`lib/bloc/company/company_bloc.dart`)
-        - `ProfileBloc` (`lib/bloc/profile/profile_bloc.dart`) for the home profile
+        - `CompanyDetailsBloc` (`lib/bloc/company/company_detalis/company_details_bloc.dart`)
+        - `ProfileBloc` (`lib/bloc/profile/profile_bloc.dart`) for the home profile and user details
         - `OnBoardBloc` (`lib/bloc/onboard/onboard_bloc.dart`) for onboarding pages
     - Events represent user actions or lifecycle events (`*_event.dart`).
     - States capture UI-relevant data (`*_state.dart`), commonly including `isLoading`, data
@@ -131,6 +137,9 @@ lib/
       company_list.dart
       home_screen.dart
       user_list.dart
+    details/
+      company_details_screen.dart
+      user_details_screen.dart
     bottom_navigation_screen.dart
     login_screen.dart
     on_boarding_screen.dart

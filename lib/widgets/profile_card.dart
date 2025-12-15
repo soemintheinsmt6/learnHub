@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:learn_hub/models/user.dart';
+import 'package:learn_hub/widgets/tiles/skill_tile.dart';
 import 'images/cached_image.dart';
 
 class ProfileCard extends StatelessWidget {
@@ -77,29 +78,7 @@ class ProfileCard extends StatelessWidget {
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 12),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: skills
-                    .map(
-                      (skill) => Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(24),
-                          border: Border.all(color: Colors.grey.shade300),
-                        ),
-                        child: Text(
-                          skill,
-                          style: const TextStyle(fontSize: 13),
-                        ),
-                      ),
-                    )
-                    .toList(),
-              ),
+              SkillWrapList(skills: skills),
             ],
           ),
         ),
