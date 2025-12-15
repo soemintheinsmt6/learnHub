@@ -54,20 +54,11 @@ class UserDetailsScreen extends StatelessWidget {
         body: SafeArea(
           child: BlocBuilder<ProfileBloc, ProfileState>(
             builder: (context, state) {
-              if (state.isLoading) {
-                return Center(
-                  child: CircularProgressIndicator(color: AppColors.primary),
-                );
-              }
-
-              if (state.error != null) {
+              if (state.error != null && state.user == null) {
                 return Center(child: Text('Error: ${state.error}'));
               }
 
-              final user = state.user;
-              if (user == null) {
-                return const SizedBox.shrink();
-              }
+              final user = state.user ?? User.placeHolder;
 
               return _UserDetailsBody(user: user);
             },
@@ -208,11 +199,7 @@ class _UserDetailsBody extends StatelessWidget {
                 const SizedBox(height: 12),
                 InfoRow(label: 'Phone', value: user.phone),
                 const SizedBox(height: 12),
-                InfoRow(
-                  label: 'Address',
-                  value:
-                      '${user.address}, ${user.state}, ${user.zip}, ${user.country}',
-                ),
+                InfoRow(label: 'Address', value: user.fullAddress),
               ],
             ),
           ),

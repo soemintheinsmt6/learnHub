@@ -11,6 +11,8 @@ class User {
   String phone;
   String? photo;
 
+  String get fullAddress => '$address, $state, $zip, $country';
+
   User({
     required this.id,
     required this.name,
@@ -52,4 +54,17 @@ class User {
     "phone": phone,
     "photo": photo,
   };
+
+  static User placeHolder = User(
+    id: 0,
+    name: '',
+    company: '',
+    username: '',
+    email: '',
+    address: '',
+    zip: '',
+    state: '',
+    country: '',
+    phone: '',
+  );
 }

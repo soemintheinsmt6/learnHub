@@ -43,20 +43,11 @@ class CompanyDetailsScreen extends StatelessWidget {
         body: SafeArea(
           child: BlocBuilder<CompanyDetailsBloc, CompanyDetailsState>(
             builder: (context, state) {
-              if (state.isLoading) {
-                return Center(
-                  child: CircularProgressIndicator(color: AppColors.primary),
-                );
-              }
-
-              if (state.error != null) {
+              if (state.error != null && state.company == null) {
                 return Center(child: Text('Error: ${state.error}'));
               }
 
-              final company = state.company;
-              if (company == null) {
-                return const SizedBox.shrink();
-              }
+              final company = state.company ?? Company.placeHolder;
 
               return _CompanyDetailsBody(company: company);
             },
@@ -108,7 +99,11 @@ class _CompanyDetailsBody extends StatelessWidget {
                   clipBehavior: Clip.antiAlias,
                   child: company.logo.isNotEmpty
                       ? CachedImage(url: company.logo)
-                      : const Icon(Icons.apartment, size: 40),
+                      : Icon(
+                          Icons.apartment,
+                          size: 40,
+                          color: AppColors.secondaryBackground,
+                        ),
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -219,11 +214,7 @@ class _CompanyDetailsBody extends StatelessWidget {
                 const SizedBox(height: 12),
                 InfoRow(label: 'CEO', value: company.ceoName),
                 const SizedBox(height: 12),
-                InfoRow(
-                  label: 'Address',
-                  value:
-                      '${company.address}, ${company.zip}, ${company.country}',
-                ),
+                InfoRow(label: 'Address', value: company.fullAddress),
               ],
             ),
           ),

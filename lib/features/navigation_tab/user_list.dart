@@ -5,9 +5,9 @@ import 'package:learn_hub/bloc/user/user_event.dart';
 import 'package:learn_hub/bloc/user/user_state.dart';
 import 'package:learn_hub/repositories/user_repository.dart';
 import 'package:learn_hub/utils/push_view.dart';
+import 'package:learn_hub/widgets/shimmer/user_list_shimmer.dart';
 import 'package:learn_hub/widgets/tiles/user_tile.dart';
 
-import '../../utils/app_color.dart';
 import '../details/user_details_screen.dart';
 
 class UserList extends StatelessWidget {
@@ -19,15 +19,12 @@ class UserList extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => UserBloc(repository)..add(LoadUser()),
-
       child: Scaffold(
         appBar: AppBar(title: const Text("User List")),
         body: BlocBuilder<UserBloc, UserState>(
           builder: (context, state) {
             if (state.isLoading) {
-              return Center(
-                child: CircularProgressIndicator(color: AppColors.primary),
-              );
+              return const UserListShimmer();
             }
 
             if (state.error != null) {
@@ -36,8 +33,9 @@ class UserList extends StatelessWidget {
 
             return ListView.separated(
               itemCount: state.users.length,
-              padding: EdgeInsets.all(20),
-              separatorBuilder: (BuildContext context, int index) => Divider(),
+              padding: const EdgeInsets.all(20),
+              separatorBuilder: (BuildContext context, int index) =>
+                  const Divider(),
               itemBuilder: (context, index) {
                 final user = state.users[index];
                 return UserTile(

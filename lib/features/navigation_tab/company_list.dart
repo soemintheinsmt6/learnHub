@@ -5,9 +5,10 @@ import 'package:learn_hub/bloc/company/company_event.dart';
 import 'package:learn_hub/bloc/company/company_state.dart';
 import 'package:learn_hub/features/details/company_details_screen.dart';
 import 'package:learn_hub/repositories/company_repository.dart';
-import 'package:learn_hub/utils/app_color.dart';
 import 'package:learn_hub/utils/push_view.dart';
 import 'package:learn_hub/widgets/tiles/company_tile.dart';
+
+import '../../widgets/shimmer/company_list_shimmer.dart';
 
 class CompanyList extends StatelessWidget {
   const CompanyList({super.key, required this.repository});
@@ -23,9 +24,7 @@ class CompanyList extends StatelessWidget {
         body: BlocBuilder<CompanyBloc, CompanyState>(
           builder: (context, state) {
             if (state.isLoading) {
-              return Center(
-                child: CircularProgressIndicator(color: AppColors.primary),
-              );
+              return const CompanyListShimmer();
             }
 
             if (state.error != null) {

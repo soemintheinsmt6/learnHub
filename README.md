@@ -21,11 +21,12 @@ business logic, and data access for better maintainability and scalability.
   (`lib/features/login_screen.dart`)
 - Home tab showing a user profile fetched from `users/1` with “About Me” and
   “My Skills” sections (`lib/features/navigation_tab/home_screen.dart`)
-- User list tab with avatars and basic info (`lib/features/navigation_tab/user_list.dart`);
+- User list tab with avatars and basic info (`lib/features/navigation_tab/user_list.dart`),
+  including shimmer skeleton loading while data is fetched;
   tapping a user opens a full user details screen with profile photo, stats,
   “About Me”, “My Skills”, and personal information
   (`lib/features/details/user_details_screen.dart`)
-- Company list tab with card-style tiles and progress indicator
+- Company list tab with card-style tiles, progress indicator, and shimmer skeleton loading
   (`lib/features/navigation_tab/company_list.dart`); tapping a company opens
   a company details screen with hero banner, metrics, and company information
   (`lib/features/details/company_details_screen.dart`)
@@ -63,7 +64,7 @@ The app uses a layered architecture with clear responsibilities:
 4. `UserRepository` (`lib/repositories/user_repository.dart`) calls `ApiService.get('users')`.
 5. The JSON response is mapped to `User` models (`lib/models/user.dart`) and returned.
 6. `UserBloc` emits loading, success, or error states (`lib/bloc/user/user_state.dart`), and the UI
-   rebuilds with a loading spinner, error message, or `ListView` of `UserTile` widgets (
+   rebuilds with a shimmer skeleton, error message, or `ListView` of `UserTile` widgets (
    `lib/widgets/user_tile.dart`).
 
 The company list follows the same pattern using `CompanyBloc`, `CompanyRepository`, and `Company`
