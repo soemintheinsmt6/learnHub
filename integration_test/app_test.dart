@@ -4,6 +4,8 @@ import 'package:integration_test/integration_test.dart';
 import 'package:learn_hub/main.dart' as app;
 import 'package:learn_hub/widgets/tiles/company_tile.dart';
 import 'package:learn_hub/widgets/tiles/user_tile.dart';
+import 'package:learn_hub/widgets/shimmer/user_list_shimmer.dart';
+import 'package:shimmer/shimmer.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -23,13 +25,13 @@ void main() {
     // Check if we're on onboarding screen
     final skipButton = find.text('Skip');
     final continueButton = find.text('Continue');
-    
+
     // If we see Skip or Continue, we're on onboarding screen
     if (skipButton.evaluate().isNotEmpty) {
       // Tap Skip to go to last page
       await tester.tap(skipButton);
       await tester.pumpAndSettle();
-      
+
       // Now on last page, tap Sign In to go to login screen
       final signInBtn = find.text('Sign In');
       if (signInBtn.evaluate().isNotEmpty) {
@@ -86,41 +88,43 @@ void main() {
   }
 
   group('Learn Hub Integration Tests', () {
-    testWidgets('App launches and displays splash screen then onboarding then login screen', (
-      WidgetTester tester,
-    ) async {
-      // Start the app
-      app.main();
-      await tester.pump();
+    testWidgets(
+      'App launches and displays splash screen then onboarding then login screen',
+      (WidgetTester tester) async {
+        // Start the app
+        app.main();
+        await tester.pump();
 
-      // Initially, splash screen should be visible
-      // Wait a bit to see splash screen
-      await tester.pump(const Duration(milliseconds: 100));
+        // Initially, splash screen should be visible
+        // Wait a bit to see splash screen
+        await tester.pump(const Duration(milliseconds: 100));
 
-      // Wait for splash screen to complete and navigate to onboarding
-      await tester.pumpAndSettle(const Duration(seconds: 3));
+        // Wait for splash screen to complete and navigate to onboarding
+        await tester.pumpAndSettle(const Duration(seconds: 3));
 
-      // Verify we're on onboarding screen
-      // Either Skip or Continue button should be present
-      final skipButton = find.text('Skip');
-      final continueButton = find.text('Continue');
-      expect(
-        skipButton.evaluate().isNotEmpty || continueButton.evaluate().isNotEmpty,
-        isTrue,
-      );
+        // Verify we're on onboarding screen
+        // Either Skip or Continue button should be present
+        final skipButton = find.text('Skip');
+        final continueButton = find.text('Continue');
+        expect(
+          skipButton.evaluate().isNotEmpty ||
+              continueButton.evaluate().isNotEmpty,
+          isTrue,
+        );
 
-      // Navigate through onboarding to login
-      await waitForLoginScreen(tester);
+        // Navigate through onboarding to login
+        await waitForLoginScreen(tester);
 
-      // Verify login screen is displayed
-      // "Sign In" appears twice - once as title, once as button text
-      expect(find.text('Sign In'), findsNWidgets(2));
-      expect(find.text('Welcome Developer'), findsOneWidget);
-      // "User Name" appears twice - once as label, once as hint text
-      expect(find.text('User Name'), findsNWidgets(2));
-      // "Password" appears twice - once as label, once as hint text
-      expect(find.text('Password'), findsNWidgets(2));
-    });
+        // Verify login screen is displayed
+        // "Sign In" appears twice - once as title, once as button text
+        expect(find.text('Sign In'), findsNWidgets(2));
+        expect(find.text('Welcome Developer'), findsOneWidget);
+        // "User Name" appears twice - once as label, once as hint text
+        expect(find.text('User Name'), findsNWidgets(2));
+        // "Password" appears twice - once as label, once as hint text
+        expect(find.text('Password'), findsNWidgets(2));
+      },
+    );
 
     testWidgets('Onboarding screen displays and can be navigated', (
       WidgetTester tester,
@@ -137,10 +141,11 @@ void main() {
       final skipButton = find.text('Skip');
       final continueButton = find.text('Continue');
       expect(
-        skipButton.evaluate().isNotEmpty || continueButton.evaluate().isNotEmpty,
+        skipButton.evaluate().isNotEmpty ||
+            continueButton.evaluate().isNotEmpty,
         isTrue,
       );
-      
+
       // Verify page indicator is present
       expect(find.byType(PageView), findsOneWidget);
 
@@ -203,6 +208,37 @@ void main() {
       }
     });
 
+    testWidgets('User detail screen shows skills and personal info sections', (
+      WidgetTester tester,
+    ) async {
+      app.main();
+      await waitForLoginScreen(tester);
+      await attemptLogin(tester);
+
+      final bottomNavBar = find.byType(BottomNavigationBar);
+      if (bottomNavBar.evaluate().isNotEmpty) {
+        final userTab = find.byIcon(Icons.person);
+        if (userTab.evaluate().isNotEmpty) {
+          await tester.tap(userTab);
+          await tester.pumpAndSettle(const Duration(seconds: 3));
+        }
+
+        final userTileFinder = find.byType(UserTile);
+        if (userTileFinder.evaluate().isNotEmpty) {
+          await tester.tap(userTileFinder.first);
+          await tester.pumpAndSettle(const Duration(seconds: 3));
+
+          expect(find.text('My Skills'), findsOneWidget);
+          expect(find.text('Personal Information'), findsOneWidget);
+          // Labels inside personal info (InfoRow renders labels in uppercase)
+          expect(find.text('COMPANY'), findsWidgets);
+          expect(find.text('EMAIL'), findsWidgets);
+          expect(find.text('PHONE'), findsWidgets);
+          expect(find.text('ADDRESS'), findsWidgets);
+        }
+      }
+    });
+
     testWidgets('Company detail screen can be opened from company list', (
       WidgetTester tester,
     ) async {
@@ -225,6 +261,36 @@ void main() {
 
           expect(find.text('About Company'), findsOneWidget);
           expect(find.text('Company Information'), findsOneWidget);
+        }
+      }
+    });
+
+    testWidgets('Company detail screen shows metrics and info sections', (
+      WidgetTester tester,
+    ) async {
+      app.main();
+      await waitForLoginScreen(tester);
+      await attemptLogin(tester);
+
+      final bottomNavBar = find.byType(BottomNavigationBar);
+      if (bottomNavBar.evaluate().isNotEmpty) {
+        final companyTab = find.byIcon(Icons.collections_bookmark);
+        if (companyTab.evaluate().isNotEmpty) {
+          await tester.tap(companyTab);
+          await tester.pumpAndSettle(const Duration(seconds: 3));
+        }
+
+        final companyTileFinder = find.byType(CompanyTile);
+        if (companyTileFinder.evaluate().isNotEmpty) {
+          await tester.tap(companyTileFinder.first);
+          await tester.pumpAndSettle(const Duration(seconds: 3));
+
+          expect(find.text('EMPLOYEES'), findsOneWidget);
+          expect(find.text('MARKET CAP'), findsOneWidget);
+          expect(find.text('About Company'), findsOneWidget);
+          expect(find.text('Company Information'), findsOneWidget);
+          expect(find.text('+ Follow'), findsOneWidget);
+          expect(find.text('Website'), findsOneWidget);
         }
       }
     });
@@ -431,13 +497,15 @@ void main() {
           // Verify user list screen elements
           expect(find.text('User List'), findsOneWidget);
 
-          // Check for loading indicator or list content
-          final loadingIndicator = find.byType(CircularProgressIndicator);
+          // Check for shimmer loading or list content
+          final shimmer = find.byType(UserListShimmer);
+          final shimmerWidget = find.byType(Shimmer);
           final listView = find.byType(ListView);
 
           // Either loading or list should be present
           expect(
-            loadingIndicator.evaluate().isNotEmpty ||
+            shimmer.evaluate().isNotEmpty ||
+                shimmerWidget.evaluate().isNotEmpty ||
                 listView.evaluate().isNotEmpty,
             isTrue,
           );
@@ -462,14 +530,13 @@ void main() {
           // Verify company list screen elements
           expect(find.text('Company List'), findsOneWidget);
 
-          // Check for loading indicator or list content
-          final loadingIndicator = find.byType(CircularProgressIndicator);
+          // Check for shimmer loading or list content
+          final shimmer = find.byType(Shimmer);
           final listView = find.byType(ListView);
 
           // Either loading or list should be present
           expect(
-            loadingIndicator.evaluate().isNotEmpty ||
-                listView.evaluate().isNotEmpty,
+            shimmer.evaluate().isNotEmpty || listView.evaluate().isNotEmpty,
             isTrue,
           );
         }
