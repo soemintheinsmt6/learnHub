@@ -220,7 +220,9 @@ flutter test integration_test
 ## Running the app
 
 1. Ensure Flutter SDK is installed and on your `PATH`.
-2. Configure the API base URL in `.env` referenced by `AppConfig`.
+2. Create a `.env` file in the project root based on `.env.example` and
+   configure the API base URL (and any other required properties) referenced
+   by `AppConfig`.
 3. Fetch dependencies:
 
    ```bash
